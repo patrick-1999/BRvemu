@@ -1,8 +1,6 @@
 #include "rvemu.h"
 
-static inline u64 hash(u64 elem) {
-    return elem % SET_SIZE;
-}
+static FORCE_INLINE u64 hash(u64 elem) { return elem % SET_SIZE; }
 
 bool set_has(set_t *set, u64 elem) {
     assert(elem != 0);

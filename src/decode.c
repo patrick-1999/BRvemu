@@ -15,14 +15,14 @@
 #define FUNCT7(data) (((data) >> 25) & 0x7f)
 #define IMM116(data) (((data) >> 26) & 0x3f)
 
-static inline insn_t insn_utype_read(u32 data) {
+static FORCE_INLINE insn_t insn_utype_read(u32 data) {
     return (insn_t) {
         .imm = (i32)data & 0xfffff000,
         .rd = RD(data),
     };
 }
 
-static inline insn_t insn_itype_read(u32 data) {
+static FORCE_INLINE insn_t insn_itype_read(u32 data) {
     return (insn_t) {
         .imm = (i32)data >> 20,
         .rs1 = RS1(data),
@@ -30,7 +30,7 @@ static inline insn_t insn_itype_read(u32 data) {
     };
 }
 
-static inline insn_t insn_jtype_read(u32 data) {
+static FORCE_INLINE insn_t insn_jtype_read(u32 data) {
     u32 imm20   = (data >> 31) & 0x1;
     u32 imm101  = (data >> 21) & 0x3ff;
     u32 imm11   = (data >> 20) & 0x1;
@@ -45,7 +45,7 @@ static inline insn_t insn_jtype_read(u32 data) {
     };
 }
 
-static inline insn_t insn_btype_read(u32 data) {
+static FORCE_INLINE insn_t insn_btype_read(u32 data) {
     u32 imm12  = (data >> 31) & 0x1;
     u32 imm105 = (data >> 25) & 0x3f;
     u32 imm41  = (data >>  8) & 0xf;
@@ -61,7 +61,7 @@ static inline insn_t insn_btype_read(u32 data) {
     };
 }
 
-static inline insn_t insn_rtype_read(u32 data) {
+static FORCE_INLINE insn_t insn_rtype_read(u32 data) {
     return (insn_t) {
         .rs1 = RS1(data),
         .rs2 = RS2(data),
@@ -69,7 +69,7 @@ static inline insn_t insn_rtype_read(u32 data) {
     };
 }
 
-static inline insn_t insn_stype_read(u32 data) {
+static FORCE_INLINE insn_t insn_stype_read(u32 data) {
     u32 imm115 = (data >> 25) & 0x7f;
     u32 imm40  = (data >>  7) & 0x1f;
 
@@ -82,7 +82,7 @@ static inline insn_t insn_stype_read(u32 data) {
     };
 }
 
-static inline insn_t insn_csrtype_read(u32 data) {
+static FORCE_INLINE insn_t insn_csrtype_read(u32 data) {
     return (insn_t) {
         .csr = data >> 20,
         .rs1 = RS1(data),
@@ -90,7 +90,7 @@ static inline insn_t insn_csrtype_read(u32 data) {
     };
 }
 
-static inline insn_t insn_fprtype_read(u32 data) {
+static FORCE_INLINE insn_t insn_fprtype_read(u32 data) {
     return (insn_t) {
         .rs1 = RS1(data),
         .rs2 = RS2(data),
@@ -111,7 +111,7 @@ static inline insn_t insn_fprtype_read(u32 data) {
 #define RC1(data)         (((data) >>  7) & 0x1f)
 #define RC2(data)         (((data) >>  2) & 0x1f)
 
-static inline insn_t insn_catype_read(u16 data) {
+static FORCE_INLINE insn_t insn_catype_read(u16 data) {
     return (insn_t) {
         .rd = RP1(data) + 8,
         .rs2 = RP2(data) + 8,
@@ -119,7 +119,7 @@ static inline insn_t insn_catype_read(u16 data) {
     };
 }
 
-static inline insn_t insn_crtype_read(u16 data) {
+static FORCE_INLINE insn_t insn_crtype_read(u16 data) {
     return (insn_t) {
         .rs1 = RC1(data),
         .rs2 = RC2(data),
@@ -127,7 +127,7 @@ static inline insn_t insn_crtype_read(u16 data) {
     };
 }
 
-static inline insn_t insn_citype_read(u16 data) {
+static FORCE_INLINE insn_t insn_citype_read(u16 data) {
     u32 imm40 = (data >>  2) & 0x1f;
     u32 imm5  = (data >> 12) & 0x1;
     i32 imm = (imm5 << 5) | imm40;
@@ -140,7 +140,7 @@ static inline insn_t insn_citype_read(u16 data) {
     };
 }
 
-static inline insn_t insn_citype_read2(u16 data) {
+static FORCE_INLINE insn_t insn_citype_read2(u16 data) {
     u32 imm86 = (data >>  2) & 0x7;
     u32 imm43 = (data >>  5) & 0x3;
     u32 imm5  = (data >> 12) & 0x1;
@@ -154,7 +154,7 @@ static inline insn_t insn_citype_read2(u16 data) {
     };
 }
 
-static inline insn_t insn_citype_read3(u16 data) {
+static FORCE_INLINE insn_t insn_citype_read3(u16 data) {
     u32 imm5  = (data >>  2) & 0x1;
     u32 imm87 = (data >>  3) & 0x3;
     u32 imm6  = (data >>  5) & 0x1;
@@ -171,7 +171,7 @@ static inline insn_t insn_citype_read3(u16 data) {
     };
 }
 
-static inline insn_t insn_citype_read4(u16 data) {
+static FORCE_INLINE insn_t insn_citype_read4(u16 data) {
     u32 imm5  = (data >> 12) & 0x1;
     u32 imm42 = (data >>  4) & 0x7;
     u32 imm76 = (data >>  2) & 0x3;
@@ -185,7 +185,7 @@ static inline insn_t insn_citype_read4(u16 data) {
     };
 }
 
-static inline insn_t insn_citype_read5(u16 data) {
+static FORCE_INLINE insn_t insn_citype_read5(u16 data) {
     u32 imm1612 = (data >>  2) & 0x1f;
     u32 imm17   = (data >> 12) & 0x1;
 
@@ -198,7 +198,7 @@ static inline insn_t insn_citype_read5(u16 data) {
     };
 }
 
-static inline insn_t insn_cbtype_read(u16 data) {
+static FORCE_INLINE insn_t insn_cbtype_read(u16 data) {
     u32 imm5  = (data >>  2) & 0x1;
     u32 imm21 = (data >>  3) & 0x3;
     u32 imm76 = (data >>  5) & 0x3;
@@ -215,7 +215,7 @@ static inline insn_t insn_cbtype_read(u16 data) {
     };
 }
 
-static inline insn_t insn_cbtype_read2(u16 data) {
+static FORCE_INLINE insn_t insn_cbtype_read2(u16 data) {
     u32 imm40 = (data >>  2) & 0x1f;
     u32 imm5  = (data >> 12) & 0x1;
     i32 imm = (imm5 << 5) | imm40;
@@ -228,7 +228,7 @@ static inline insn_t insn_cbtype_read2(u16 data) {
     };
 }
 
-static inline insn_t insn_cstype_read(u16 data) {
+static FORCE_INLINE insn_t insn_cstype_read(u16 data) {
     u32 imm76 = (data >>  5) & 0x3;
     u32 imm53 = (data >> 10) & 0x7;
 
@@ -242,7 +242,7 @@ static inline insn_t insn_cstype_read(u16 data) {
     };
 }
 
-static inline insn_t insn_cstype_read2(u16 data) {
+static FORCE_INLINE insn_t insn_cstype_read2(u16 data) {
     u32 imm6  = (data >>  5) & 0x1;
     u32 imm2  = (data >>  6) & 0x1;
     u32 imm53 = (data >> 10) & 0x7;
@@ -257,7 +257,7 @@ static inline insn_t insn_cstype_read2(u16 data) {
     };
 }
 
-static inline insn_t insn_cjtype_read(u16 data) {
+static FORCE_INLINE insn_t insn_cjtype_read(u16 data) {
     u32 imm5  = (data >>  2) & 0x1;
     u32 imm31 = (data >>  3) & 0x7;
     u32 imm7  = (data >>  6) & 0x1;
@@ -276,7 +276,7 @@ static inline insn_t insn_cjtype_read(u16 data) {
     };
 }
 
-static inline insn_t insn_cltype_read(u16 data) {
+static FORCE_INLINE insn_t insn_cltype_read(u16 data) {
     u32 imm6  = (data >>  5) & 0x1;
     u32 imm2  = (data >>  6) & 0x1;
     u32 imm53 = (data >> 10) & 0x7;
@@ -291,7 +291,7 @@ static inline insn_t insn_cltype_read(u16 data) {
     };
 }
 
-static inline insn_t insn_cltype_read2(u16 data) {
+static FORCE_INLINE insn_t insn_cltype_read2(u16 data) {
     u32 imm76 = (data >>  5) & 0x3;
     u32 imm53 = (data >> 10) & 0x7;
 
@@ -305,7 +305,7 @@ static inline insn_t insn_cltype_read2(u16 data) {
     };
 }
 
-static inline insn_t insn_csstype_read(u16 data) {
+static FORCE_INLINE insn_t insn_csstype_read(u16 data) {
     u32 imm86 = (data >>  7) & 0x7;
     u32 imm53 = (data >> 10) & 0x7;
 
@@ -318,7 +318,7 @@ static inline insn_t insn_csstype_read(u16 data) {
     };
 }
 
-static inline insn_t insn_csstype_read2(u16 data) {
+static FORCE_INLINE insn_t insn_csstype_read2(u16 data) {
     u32 imm76 = (data >> 7) & 0x3;
     u32 imm52 = (data >> 9) & 0xf;
 
@@ -331,7 +331,7 @@ static inline insn_t insn_csstype_read2(u16 data) {
     };
 }
 
-static inline insn_t insn_ciwtype_read(u16 data) {
+static FORCE_INLINE insn_t insn_ciwtype_read(u16 data) {
     u32 imm3  = (data >>  5) & 0x1;
     u32 imm2  = (data >>  6) & 0x1;
     u32 imm96 = (data >>  7) & 0xf;

@@ -38,9 +38,10 @@ u8 *cache_lookup(cache_t *cache, u64 pc) {
     return NULL;
 }
 
-static inline u64 align_to(u64 val, u64 align) {
-  if (align == 0) return val;
-  return (val + align - 1) & ~(align - 1);
+static FORCE_INLINE u64 align_to(u64 val, u64 align) {
+    if (align == 0)
+        return val;
+    return (val + align - 1) & ~(align - 1);
 }
 
 u8 *cache_add(cache_t *cache, u64 pc, u8 *code, size_t sz, u64 align) {

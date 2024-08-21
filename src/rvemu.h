@@ -1,3 +1,6 @@
+#ifndef RVEMU_H
+#define RVEMU_H
+
 #include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -34,6 +37,8 @@
 
 #define TO_HOST(addr)  (addr + GUEST_MEMORY_OFFSET)
 #define TO_GUEST(addr) (addr - GUEST_MEMORY_OFFSET)
+
+#define FORCE_INLINE inline __attribute__((always_inline))
 
 enum insn_type_t {
     insn_lb, insn_lh, insn_lw, insn_ld, insn_lbu, insn_lhu, insn_lwu,
@@ -113,14 +118,12 @@ typedef struct {
     char buf[];
 } strhdr_t;
 
-inline str_t str_new() {
+FORCE_INLINE str_t str_new() {
     strhdr_t *h = (strhdr_t *)calloc(1, sizeof(strhdr_t));
     return h->buf;
 }
 
-inline size_t str_len(const str_t str) {
-    return STRHDR(str)->len;
-}
+FORCE_INLINE size_t str_len(const str_t str) { return STRHDR(str)->len; }
 
 void str_clear(str_t);
 
@@ -139,7 +142,7 @@ typedef struct {
 void mmu_load_elf(mmu_t *, int);
 u64 mmu_alloc(mmu_t *, i64);
 
-inline void mmu_write(u64 addr, u8 *data, size_t len) {
+FORCE_INLINE void mmu_write(u64 addr, u8 *data, size_t len) {
     memcpy((void *)TO_HOST(addr), (void *)data, len);
 }
 
@@ -204,12 +207,12 @@ typedef struct {
 
 typedef void (*exec_block_func_t)(state_t *);
 
-inline u64 machine_get_gp_reg(machine_t *m, i32 reg) {
+FORCE_INLINE u64 machine_get_gp_reg(machine_t *m, i32 reg) {
     assert(reg >= 0 && reg < num_gp_regs);
     return m->state.gp_regs[reg];
 }
 
-inline void machine_set_gp_reg(machine_t *m, i32 reg, u64 data) {
+FORCE_INLINE void machine_set_gp_reg(machine_t *m, i32 reg, u64 data) {
     assert(reg >= 0 && reg < num_gp_regs);
     m->state.gp_regs[reg] = data;
 }
@@ -250,3 +253,5 @@ void insn_decode(insn_t *, u32);
 */
 
 u64 do_syscall(machine_t *, u64);
+
+#endif

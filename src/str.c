@@ -1,6 +1,6 @@
 #include "rvemu.h"
 
-static inline size_t str_avail(const str_t str) {
+static FORCE_INLINE size_t str_avail(const str_t str) {
     strhdr_t *h = STRHDR(str);
     return h->alloc - h->len;
 }
@@ -24,7 +24,7 @@ static str_t str_make_room(str_t str, size_t addlen) {
     return h->buf;
 }
 
-static inline void str_setlen(str_t str, size_t newlen) {
+static FORCE_INLINE void str_setlen(str_t str, size_t newlen) {
     STRHDR(str)->len = newlen;
 }
 
