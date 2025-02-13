@@ -156,19 +156,40 @@ typedef struct {
     u64 pc;
     u64 hot;
     u64 offset;
+    bool inDRAM;
+    // // 额外维护一个inDRAM变量来标记当前的块是存储在DRAM中还是存储在SSD中
+    u64 last_logical_time;
+    u64 reused_distance;
+    double  period_priority;// 用来保存一个固定的逻辑时间中的频率，例如逻辑时间每执行1000次会扫描队列中的所有的元素统计频率
+    // 并且将频率因素根据一个时间系数来生成当前的一个优先级
+    double priority;
 } cache_item_t;
 
+#define QUEUE_MAX_SIZE 24
+// 优先级队列定义
 typedef struct {
+    cache_item_t* items[QUEUE_MAX_SIZE];  // 存储指针的数组
+    int size;                             // 当前队列的大小
+} priority_queue_t;
+
+
+typedef struct {
+    u64 logical_time;
     u8 *jitcode;
     u64 offset;
     cache_item_t table[CACHE_ENTRY_SIZE];
+    priority_queue_t pq;
 } cache_t;
+
 
 cache_t *new_cache();
 u8 *cache_lookup(cache_t *, u64);
 u8 *cache_add(cache_t *, u64, u8 *, size_t, u64);
 bool cache_hot(cache_t *, u64);
 
+void cache_exec(cache_t *cache, u64 pc);
+void pq_print(priority_queue_t* pq);
+void attenuation(priority_queue_t* pq);
 /**
  * state.c
 */

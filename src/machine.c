@@ -4,6 +4,21 @@ bool pre_interp_mode = true;
 int mode_switch_counter = 0;
 
 
+
+void save_address_to_file(uint64_t address) {
+    const char *filename = "addresses-DOFOUR.txt";
+    FILE *file = fopen(filename, "a");  // 以追加方式打开文件
+    if (file == NULL) {
+        perror("Failed to open file");
+        exit(EXIT_FAILURE);
+    }
+
+    // 写入地址（每个地址占一行）
+    fprintf(file, "%lu\n", address);
+    fclose(file);
+}
+
+
 void log_address_to_file(uint64_t address) {
     const char *filename = "log.txt";
     FILE *file = fopen(filename, "ab");  // 打开文件以二进制追加模式
@@ -21,6 +36,9 @@ enum exit_reason_t machine_step(machine_t *m) {
         bool hot = true;
 
         u8 *code = cache_lookup(m->cache, m->state.pc);
+        // if(code != (u8 *)exec_block_interp){
+        //     save_address_to_file(m->state.pc);
+        // }
         if (code == NULL) {
             hot = cache_hot(m->cache, m->state.pc);
             if (hot) {
@@ -37,6 +55,14 @@ enum exit_reason_t machine_step(machine_t *m) {
 
         while (true) {
             m->state.exit_reason = none;
+            m->cache->logical_time++;
+            //每次执行一次code就会将逻辑时间自增
+            if(m->cache->logical_time%1000000==0){
+                pq_print(&m->cache->pq);
+                attenuation(&m->cache->pq);
+                
+            }
+            // 用来记录翻译模式和JIT模式切换的次数
             if( code == (u8 *)exec_block_interp){
                 cur_interp_mode = true;
             }else{
@@ -45,10 +71,13 @@ enum exit_reason_t machine_step(machine_t *m) {
             if(cur_interp_mode!=pre_interp_mode){
                 mode_switch_counter++;
             }
+            if(code != (u8 *)exec_block_interp){
+                // 如果是编译执行会更新额外的频率和重用距离相关的数据结构
+                cache_exec(m->cache,m->state.pc);
+            }
 
 
-
-            log_address_to_file((uint64_t)m->state.pc);
+            // log_address_to_file((uint64_t)m->state.pc);
             ((exec_block_func_t)code)(&m->state);
             pre_interp_mode = cur_interp_mode;
             assert(m->state.exit_reason != none);
